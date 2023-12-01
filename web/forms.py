@@ -18,3 +18,8 @@ class RegistrationForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
+
+
+class AuthForm(forms.Form):
+    email = forms.EmailField()
+    password = forms.CharField(widget=forms.PasswordInput())

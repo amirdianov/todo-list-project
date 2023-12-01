@@ -2,19 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>TODO List</title>
 </head>
 <body>
 <div>
-    {% if not is_success %}
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button>Зарегистрироваться</button>
-        </form>
-    {% else %}
-        <p><b>Спасибо за регистрацию!</b></p>
-    {% endif %}
+    <h1><a href="{% url "main" %}">TODO List</a></h1>
+    <nav>
+        <a href="{% url "main" %}">Главная</a>
+        {% if user.is_anonymous %}
+            <a href="{% url "registration" %}">Регистрация</a>
+            <a href="{% url "auth" %}">Авторизация</a>
+        {% else %}
+            <a href="{% url "logout" %}">Выход</a>
+        {% endif %}
+    </nav>
+    {% block content %}
+    {% endblock %}
 </div>
 </body>
 </html>
