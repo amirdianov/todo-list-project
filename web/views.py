@@ -1,12 +1,28 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
+from django.urls import reverse
+from django.views.generic import CreateView
 
-from web.forms import RegistrationForm, AuthForm
+from web.forms import RegistrationForm, AuthForm, TaskListForm
 from web.models import User
 
 
 def main_view(request):
     return render(request, "web/main.html")
+
+
+class TodoListMixin:
+    template_name = "web/tasklist_form.html"
+
+    def get_initial(self):
+        return {"user": self.request.user}
+
+    def get_success_url(self):
+        return reverse("main")
+
+
+class TodoListCreateFormView(TodoListMixin, CreateView):
+    form_class = TaskListForm
 
 
 def registration_view(request):

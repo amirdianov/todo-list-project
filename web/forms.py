@@ -1,6 +1,6 @@
 from django import forms
 
-from web.models import User
+from web.models import User, TaskList
 
 
 class RegistrationForm(forms.ModelForm):
@@ -23,3 +23,14 @@ class RegistrationForm(forms.ModelForm):
 class AuthForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput())
+
+
+class TaskListForm(forms.ModelForm):
+
+    def save(self, *args, **kwargs):
+        self.instance.created_user = self.initial['user']
+        return super(TaskListForm, self).save(*args, **kwargs)
+
+    class Meta:
+        model = TaskList
+        fields = ('title',)
