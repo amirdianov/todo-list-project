@@ -1,18 +1,25 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 
 from web.forms import RegistrationForm, AuthForm, TaskListForm
-from web.models import User
+from web.models import User, TaskList
 
 
-def main_view(request):
-    return render(request, "web/main.html")
+class TaskListView(ListView):
+    template_name = "web/main.html"
+    model = TaskList
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return TaskList.objects.none()
+        else:
+            return TaskList.objects.filter(created_user=self.request.user)
 
 
-class TodoListMixin:
-    template_name = "web/tasklist_form.html"
+class TaskListMixin:
+    template_name = "web/task_list_form.html"
 
     def get_initial(self):
         return {"user": self.request.user}
@@ -21,7 +28,7 @@ class TodoListMixin:
         return reverse("main")
 
 
-class TodoListCreateFormView(TodoListMixin, CreateView):
+class TaskListCreateFormView(TaskListMixin, CreateView):
     form_class = TaskListForm
 
 

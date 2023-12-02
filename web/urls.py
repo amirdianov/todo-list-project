@@ -16,13 +16,13 @@ Including another URLconf
 """
 from django.urls import path
 
-from web.views import registration_view, auth_view, main_view, logout_view, TodoListCreateFormView
+from web.views import registration_view, auth_view, logout_view, TaskListCreateFormView, TaskListView
 
 urlpatterns = [
     path("registration/", registration_view, name='registration'),
     path("auth/", auth_view, name='auth'),
     path("logout/", logout_view, name='logout'),
-    path("tasklist/add", TodoListCreateFormView.as_view(), name='tasklist_add'),
-    path("", main_view, name='main'),
+    path("task_list/add/", TaskListCreateFormView.as_view(), name='task_list_add'),
+    path("", TaskListView.as_view(), name='main'),
 
 ]

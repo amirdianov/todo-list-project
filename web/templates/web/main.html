@@ -1,9 +1,13 @@
 {% extends "web/base.html" %}
 {% block content %}
-    <h1>Hello world</h1>
-    <p>
-        {% if not user.is_anonymous %}
-            Вы авторизованы как <b>{{ user.name }}</b>
-        {% endif %}
-    </p>
+    {% if not user.is_anonymous %}
+        Вы авторизованы как <b>{{ user.name }}</b>
+        <div>
+            <p>Мои списки дел / <a href="{% url 'task_list_add' %}">Добавить список дел</a>
+            </p>
+            {% for tasklist in object_list %}
+                <p><b>{{ tasklist.title }}</b></p>
+            {% endfor %}
+        </div>
+    {% endif %}
 {% endblock %}
