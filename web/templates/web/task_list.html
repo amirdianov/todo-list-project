@@ -1,8 +1,12 @@
 {% extends "web/base.html" %}
 {% block content %}
+    <p><a href="{% url 'task_list_edit' object.title object.id %}">Редактировать список</a></p>
     <p><a href="{% url 'todo_task_add' %}">Добавить задачу</a></p>
-    {% for task in tasks %}
-        {{ task.title }}
-        <small>{{ task.description }}</small>
-    {% endfor %}
+    <ul>
+        {% for task in tasks %}
+            <li>
+                {{ task.title }} - <small>{{ task.description }}</small>
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}

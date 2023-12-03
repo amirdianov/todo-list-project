@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView
 
 from web.forms import RegistrationForm, AuthForm, TaskListForm, TodoTaskForm
 from web.models import User, TaskList, TodoTask
@@ -33,6 +33,9 @@ class TaskListDetailView(DetailView):
 
 class TaskListMixin:
     template_name = "web/task_list_form.html"
+    slug_field = "id"
+    slug_url_kwarg = "id"
+    model = TaskList
 
     def get_initial(self):
         return {"user": self.request.user}
@@ -41,11 +44,22 @@ class TaskListMixin:
         return reverse("main")
 
 
-class TaskListCreateFormView(TaskListMixin, CreateView):
+class TaskListCreateView(TaskListMixin, CreateView):
     form_class = TaskListForm
 
 
-class TodoTaskCreateFormView(TaskListMixin, CreateView):
+class TaskListUpdateView(TaskListMixin, UpdateView):
+    form_class = TaskListForm
+
+    def get_context_data(self, **kwargs):
+        return {
+            **super(TaskListUpdateView, self).get_context_data(**kwargs),
+            "id": self.kwargs[self.slug_url_kwarg],
+            "title": self.object.title,
+        }
+
+
+class TodoTaskCreateView(TaskListMixin, CreateView):
     form_class = TodoTaskForm
     template_name = "web/todo_task_form.html"
 

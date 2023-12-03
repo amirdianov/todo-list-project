@@ -16,15 +16,16 @@ Including another URLconf
 """
 from django.urls import path
 
-from web.views import registration_view, auth_view, logout_view, TaskListCreateFormView, TaskListView, \
-    TaskListDetailView, TodoTaskCreateFormView
+from web.views import registration_view, auth_view, logout_view, TaskListCreateView, TaskListView, \
+    TaskListDetailView, TodoTaskCreateView, TaskListUpdateView
 
 urlpatterns = [
     path("registration/", registration_view, name='registration'),
     path("auth/", auth_view, name='auth'),
     path("logout/", logout_view, name='logout'),
-    path("task_list/add/", TaskListCreateFormView.as_view(), name='task_list_add'),
+    path("task_list/<str:title>/<int:id>/edit", TaskListUpdateView.as_view(), name='task_list_edit'),
+    path("task_list/add/", TaskListCreateView.as_view(), name='task_list_add'),
     path("task_lists/", TaskListView.as_view(), name='main'),
     path("task_list/<str:title>/<int:id>", TaskListDetailView.as_view(), name='task_list'),
-    path("task_list/todo_task/add", TodoTaskCreateFormView.as_view(), name='todo_task_add')
+    path("task_list/todo_task/add", TodoTaskCreateView.as_view(), name='todo_task_add')
 ]
