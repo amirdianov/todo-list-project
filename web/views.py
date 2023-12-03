@@ -59,9 +59,29 @@ class TaskListUpdateView(TaskListMixin, UpdateView):
         }
 
 
-class TodoTaskCreateView(TaskListMixin, CreateView):
+class TodoTaskDetailView(DetailView):
     form_class = TodoTaskForm
+    template_name = 'web/todo_task.html'
+    slug_field = "id"
+    slug_url_kwarg = "todo_task_id"
+    model = TodoTask
+
+
+class TodoTaskMixin:
     template_name = "web/todo_task_form.html"
+    slug_field = "id"
+    slug_url_kwarg = "id"
+    model = TaskList
+
+    def get_initial(self):
+        return {"user": self.request.user, "task_list_id": self.kwargs[self.slug_url_kwarg]}
+
+    def get_success_url(self):
+        return reverse("main")
+
+
+class TodoTaskCreateView(TodoTaskMixin, CreateView):
+    form_class = TodoTaskForm
 
 
 def registration_view(request):

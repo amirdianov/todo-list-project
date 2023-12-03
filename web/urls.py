@@ -17,7 +17,7 @@ Including another URLconf
 from django.urls import path
 
 from web.views import registration_view, auth_view, logout_view, TaskListCreateView, TaskListView, \
-    TaskListDetailView, TodoTaskCreateView, TaskListUpdateView
+    TaskListDetailView, TodoTaskCreateView, TaskListUpdateView, TodoTaskDetailView
 
 urlpatterns = [
     path("registration/", registration_view, name='registration'),
@@ -27,5 +27,7 @@ urlpatterns = [
     path("task_list/add/", TaskListCreateView.as_view(), name='task_list_add'),
     path("task_lists/", TaskListView.as_view(), name='main'),
     path("task_list/<str:title>/<int:id>", TaskListDetailView.as_view(), name='task_list'),
-    path("task_list/todo_task/add", TodoTaskCreateView.as_view(), name='todo_task_add')
+    path("task_list/<str:title>/<int:id>/todo_task/add", TodoTaskCreateView.as_view(), name='todo_task_add'),
+    path("task_list/<str:task_list_title>/<int:task_list_id>/todo_task/<str:todo_task_title>/<int:todo_task_id>",
+         TodoTaskDetailView.as_view(), name='todo_task')
 ]

@@ -39,8 +39,9 @@ class TaskListForm(forms.ModelForm):
 class TodoTaskForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         self.instance.created_user = self.initial['user']
+        self.instance.task_list_id = self.initial['task_list_id']
         return super(TodoTaskForm, self).save(*args, **kwargs)
 
     class Meta:
         model = TodoTask
-        fields = '__all__'
+        exclude = ('created_user', 'task_list', )

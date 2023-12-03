@@ -1,0 +1,10 @@
+{% extends "web/base.html" %}
+{% block content %}
+    <p><a href="{% url 'task_list_edit' object.title object.id %}">Редактировать задчау</a></p>
+    <ol>
+        <li>{{ object.title }}</li>
+        <li>{{ object.description }}</li>
+        <li>{{ object.start_date }}</li>
+        <li>{{ object.end_date }}</li>
+    </ol>
+{% endblock %}

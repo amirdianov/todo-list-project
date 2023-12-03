@@ -1,11 +1,11 @@
 {% extends "web/base.html" %}
 {% block content %}
     <p><a href="{% url 'task_list_edit' object.title object.id %}">Редактировать список</a></p>
-    <p><a href="{% url 'todo_task_add' %}">Добавить задачу</a></p>
+    <p><a href="{% url 'todo_task_add' object.title object.id %}">Добавить задачу</a></p>
     <ul>
         {% for task in tasks %}
             <li>
-                {{ task.title }} - <small>{{ task.description }}</small>
+                <a href="{% url 'todo_task' object.title object.id task.title task.id %}">{{ task.title }}</a> - <small>{{ task.description }}</small>
             </li>
         {% endfor %}
     </ul>
