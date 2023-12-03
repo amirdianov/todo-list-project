@@ -1,6 +1,6 @@
 from django import forms
 
-from web.models import User, TaskList
+from web.models import User, TaskList, TodoTask
 
 
 class RegistrationForm(forms.ModelForm):
@@ -34,3 +34,13 @@ class TaskListForm(forms.ModelForm):
     class Meta:
         model = TaskList
         fields = ('title',)
+
+
+class TodoTaskForm(forms.ModelForm):
+    def save(self, *args, **kwargs):
+        self.instance.created_user = self.initial['user']
+        return super(TodoTaskForm, self).save(*args, **kwargs)
+
+    class Meta:
+        model = TodoTask
+        fields = '__all__'

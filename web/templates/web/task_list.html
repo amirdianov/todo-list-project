@@ -1,0 +1,8 @@
+{% extends "web/base.html" %}
+{% block content %}
+    <p><a href="{% url 'todo_task_add' %}">Добавить задачу</a></p>
+    {% for task in tasks %}
+        {{ task.title }}
+        <small>{{ task.description }}</small>
+    {% endfor %}
+{% endblock %}

@@ -6,7 +6,7 @@
             <p>Мои списки дел / <a href="{% url 'task_list_add' %}">Добавить список дел</a>
             </p>
             {% for tasklist in object_list %}
-                <p><b>{{ tasklist.title }}</b></p>
+                <p><b><a href="{% url "task_list" tasklist.title tasklist.id %}">{{ tasklist.title }}</a></b></p>
             {% endfor %}
         </div>
     {% endif %}

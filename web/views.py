@@ -1,10 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, DetailView
 
-from web.forms import RegistrationForm, AuthForm, TaskListForm
-from web.models import User, TaskList
+from web.forms import RegistrationForm, AuthForm, TaskListForm, TodoTaskForm
+from web.models import User, TaskList, TodoTask
 
 
 class TaskListView(ListView):
@@ -16,6 +16,19 @@ class TaskListView(ListView):
             return TaskList.objects.none()
         else:
             return TaskList.objects.filter(created_user=self.request.user)
+
+
+class TaskListDetailView(DetailView):
+    template_name = 'web/task_list.html'
+    slug_field = "id"
+    slug_url_kwarg = "id"
+    model = TaskList
+
+    def get_context_data(self, **kwargs):
+        return {
+            **super().get_context_data(**kwargs),
+            'tasks': TodoTask.objects.filter(task_list=self.object.id)
+        }
 
 
 class TaskListMixin:
@@ -30,6 +43,11 @@ class TaskListMixin:
 
 class TaskListCreateFormView(TaskListMixin, CreateView):
     form_class = TaskListForm
+
+
+class TodoTaskCreateFormView(TaskListMixin, CreateView):
+    form_class = TodoTaskForm
+    template_name = "web/todo_task_form.html"
 
 
 def registration_view(request):
