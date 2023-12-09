@@ -37,6 +37,13 @@ class TaskListForm(forms.ModelForm):
 
 
 class TodoTaskForm(forms.ModelForm):
+    start_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                                                format='%Y-%m-%dT%H:%m'),
+                                     required=False)
+    end_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                                              format='%Y-%m-%dT%H:%m'),
+                                   required=False,)
+
     def save(self, *args, **kwargs):
         self.instance.created_user = self.initial['user']
         self.instance.task_list_id = self.initial['task_list_id']
