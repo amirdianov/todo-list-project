@@ -29,8 +29,6 @@ urlpatterns = [
     path("task_list/<str:title>/<int:id>/edit/", TaskListUpdateView.as_view(), name='task_list_edit'),
     path("task_list/<str:task_list_title>/<int:task_list_id>/todo_task/<str:todo_task_title>/<int:todo_task_id>/",
          TodoTaskDetailView.as_view(), name='todo_task'),
-    path("task_list/<str:task_list_title>/<int:task_list_id>/todo_task/<str:todo_task_title>/<int:todo_task_id>/",
-         TodoTaskDetailView.as_view(), name='todo_task'),
     path("task_list/<str:title>/<int:id>/todo_task/add/", TodoTaskCreateView.as_view(), name='todo_task_add'),
     path("task_list/<str:task_list_title>/<int:task_list_id>/todo_task/<str:todo_task_title>/<int:todo_task_id>/edit/",
          TodoTaskUpdateView.as_view(), name='todo_task_edit')
