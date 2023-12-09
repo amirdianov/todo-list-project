@@ -37,18 +37,27 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_superuser(self):
         return self.role == Role.admin
 
+    def __str__(self):
+        return f'{self.name} ({self.role})'
+
 
 # Create your models here.
-class TypeTask(models.Model):
+class TaskType(models.Model):
     title = models.CharField(max_length=128, verbose_name='Название')
     created_user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL,
                                      verbose_name='Создатель типа задачи')
 
+    def __str__(self):
+        return f'{self.title}'
+
 
 class TaskList(models.Model):
     title = models.CharField(max_length=128, verbose_name='Заголовок списка')
-    created_user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL,
+    created_user = models.ForeignKey(User, on_delete=models.CASCADE,
                                      verbose_name='Создатель списка задач')
+
+    def __str__(self):
+        return f'Список заданий {self.id} "{self.title}"'
 
 
 class TodoTask(models.Model):
@@ -57,10 +66,13 @@ class TodoTask(models.Model):
     start_date = models.DateTimeField(verbose_name='Дата начала', null=True, blank=True)
     end_date = models.DateTimeField(verbose_name='Дата конца', null=True, blank=True)
     notify_at = models.DateTimeField(verbose_name='Время отправки уведомления', null=True, blank=True)
-    task_type = models.ManyToManyField(TypeTask, verbose_name='Тип задачи', null=True, blank=True)
-    created_user = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL,
+    task_type = models.ManyToManyField(TaskType, verbose_name='Тип задачи')
+    created_user = models.ForeignKey(User, on_delete=models.CASCADE,
                                      verbose_name='Создатель задачи')
-    assigned_user = models.ManyToManyField(User, null=True, blank=True, verbose_name='Назначенный сотрудник',
+    assigned_user = models.ManyToManyField(User, verbose_name='Назначенный сотрудник',
                                            related_name='assigned_users')
-    todo_task = models.ForeignKey(TaskList, null=True, blank=True, on_delete=models.SET_NULL,
+    task_list = models.ForeignKey(TaskList, on_delete=models.CASCADE,
                                   verbose_name='Список задач')
+
+    def __str__(self):
+        return f'Задание {self.id} "{self.title}"'

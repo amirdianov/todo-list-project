@@ -1,6 +1,6 @@
 from django import forms
 
-from web.models import User
+from web.models import User, TaskList, TodoTask
 
 
 class RegistrationForm(forms.ModelForm):
@@ -23,3 +23,32 @@ class RegistrationForm(forms.ModelForm):
 class AuthForm(forms.Form):
     email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput())
+
+
+class TaskListForm(forms.ModelForm):
+
+    def save(self, *args, **kwargs):
+        self.instance.created_user = self.initial['user']
+        return super(TaskListForm, self).save(*args, **kwargs)
+
+    class Meta:
+        model = TaskList
+        fields = ('title',)
+
+
+class TodoTaskForm(forms.ModelForm):
+    start_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                                                format='%Y-%m-%dT%H:%m'),
+                                     required=False)
+    end_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                                              format='%Y-%m-%dT%H:%m'),
+                                   required=False,)
+
+    def save(self, *args, **kwargs):
+        self.instance.created_user = self.initial['user']
+        self.instance.task_list_id = self.initial['task_list_id']
+        return super(TodoTaskForm, self).save(*args, **kwargs)
+
+    class Meta:
+        model = TodoTask
+        exclude = ('created_user', 'task_list', )

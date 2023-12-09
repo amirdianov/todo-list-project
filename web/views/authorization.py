@@ -5,10 +5,6 @@ from web.forms import RegistrationForm, AuthForm
 from web.models import User
 
 
-def main_view(request):
-    return render(request, "web/main.html")
-
-
 def registration_view(request):
     reg_form = RegistrationForm()
     is_success = False

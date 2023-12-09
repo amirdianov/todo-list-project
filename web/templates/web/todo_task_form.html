@@ -1,0 +1,13 @@
+{% extends "web/base.html" %}
+{% block content %}
+    {% if id %}
+        <h1>Редактирование задачи</h1>
+    {% else %}
+        <h1>Добавление задачи</h1>
+    {% endif %}
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>Добавить</button>
+    </form>
+{% endblock %}
