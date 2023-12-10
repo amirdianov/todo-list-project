@@ -13,7 +13,7 @@ class DefaultBootstrapInputs:
 
 
 class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
-    password2 = forms.CharField(widget=forms.PasswordInput())
+    password2 = forms.CharField(widget=forms.PasswordInput(), label='Повторный пароль')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -30,8 +30,9 @@ class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
 
 
 class AuthForm(DefaultBootstrapInputs, forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput())
+    email = forms.EmailField(label="Почта")
+    password = forms.CharField(widget=forms.PasswordInput(), label='Пароль')
+
 
 
 class TaskListForm(DefaultBootstrapInputs, forms.ModelForm):

@@ -3,6 +3,10 @@
     <div>
         <span><strong>Список - {{ object.title }}</strong> / </span>
         <a href="{% url 'task_list_edit' object.title object.id %}">Редактировать список</a>
+        <form method="POST" action="{% url 'task_list_delete' object.title object.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">Удалить</button>
+        </form>
     </div>
     <p><a href="{% url 'todo_task_add' object.title object.id %}">Добавить задачу</a></p>
     <ol>

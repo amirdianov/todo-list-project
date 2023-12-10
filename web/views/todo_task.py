@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, UpdateView
 
@@ -5,7 +6,7 @@ from web.forms import TodoTaskForm
 from web.models import TodoTask
 
 
-class TodoTaskDetailView(DetailView):
+class TodoTaskDetailView(LoginRequiredMixin, DetailView):
     template_name = 'web/todo_task.html'
     slug_field = "id"
     slug_url_kwarg = "todo_task_id"
@@ -28,7 +29,7 @@ class TodoTaskMixin:
         return reverse("main")
 
 
-class TodoTaskCreateView(TodoTaskMixin, CreateView):
+class TodoTaskCreateView(TodoTaskMixin, LoginRequiredMixin, CreateView):
     form_class = TodoTaskForm
     slug_url_kwarg = "id"
 
@@ -36,7 +37,7 @@ class TodoTaskCreateView(TodoTaskMixin, CreateView):
         return {"user": self.request.user, "task_list_id": self.kwargs[self.slug_url_kwarg]}
 
 
-class TodoTaskUpdateView(TodoTaskMixin, UpdateView):
+class TodoTaskUpdateView(TodoTaskMixin, LoginRequiredMixin, UpdateView):
     form_class = TodoTaskForm
     slug_url_kwarg = "todo_task_id"
 

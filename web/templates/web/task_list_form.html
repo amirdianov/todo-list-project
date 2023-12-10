@@ -9,9 +9,9 @@
         {% csrf_token %}
         {{ form.as_p }}
         {% if id %}
-            <button type="button" class="btn btn-primary">Редактировать</button>
+            <button type="submit" class="btn btn-primary">Редактировать</button>
         {% else %}
-            <button type="button" class="btn btn-primary">Добавить</button>
+            <button type="submit" class="btn btn-primary">Добавить</button>
         {% endif %}
     </form>
 {% endblock %}
