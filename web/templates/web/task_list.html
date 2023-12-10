@@ -1,7 +1,7 @@
 {% extends "web/base.html" %}
 {% block content %}
     <div>
-        <span><strong>Список задач - {{ object.title }}</strong> / </span>
+        <span><strong>Список - {{ object.title }}</strong> / </span>
         <a href="{% url 'task_list_edit' object.title object.id %}">Редактировать список</a>
     </div>
     <p><a href="{% url 'todo_task_add' object.title object.id %}">Добавить задачу</a></p>

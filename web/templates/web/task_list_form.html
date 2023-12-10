@@ -8,6 +8,10 @@
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button>Добавить</button>
+        {% if id %}
+            <button type="button" class="btn btn-primary">Редактировать</button>
+        {% else %}
+            <button type="button" class="btn btn-primary">Добавить</button>
+        {% endif %}
     </form>
 {% endblock %}

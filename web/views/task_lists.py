@@ -39,7 +39,7 @@ class TaskListMixin:
         return {"user": self.request.user}
 
     def get_success_url(self):
-        return reverse("task_list")
+        return reverse("main")
 
 
 class TaskListCreateView(TaskListMixin, CreateView):
