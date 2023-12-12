@@ -51,7 +51,7 @@ class TaskListDetailView(LoginRequiredMixin, DetailView, FilterClass):
     def get_context_data(self, **kwargs):
         return {
             **super().get_context_data(**kwargs),
-            'tasks': self.filter_queryset(TodoTask.objects.filter(task_list=self.object.id)),
+            'tasks': self.filter_queryset(TodoTask.objects.filter(task_list=self.object.id).prefetch_related('task_type').select_related('created_user')),
             'filter_form': TodoTaskFilterForm(self.request.GET)
         }
 

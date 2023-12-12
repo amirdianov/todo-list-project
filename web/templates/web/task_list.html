@@ -22,6 +22,13 @@
             <li>
                 <a href="{% url 'todo_task' object.title object.id task.title task.id %}">{{ task.title }}</a> -
                 <small>{{ task.description }}</small>
+                <br>
+                <small><strong>{{ task.created_user }}</strong></small>
+                <br>
+                {% for type in  task.task_type.all %}
+                    <small>{{ type }}</small>
+                {% endfor %}
+
             </li>
         {% endfor %}
     </ol>
