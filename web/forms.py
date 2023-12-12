@@ -1,10 +1,19 @@
 from django import forms
 
-from web.models import User, TaskList, TodoTask
+from web.models import User, TaskList, TodoTask, TaskType
 
 
-class RegistrationForm(forms.ModelForm):
-    password2 = forms.CharField(widget=forms.PasswordInput())
+class DefaultBootstrapInputs:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
+        for attr, value in self.fields.items():
+            input_class = "form-select" if self.fields[attr].widget.input_type == "select" else "form-control"
+            self.fields[attr].widget.attrs.update({"class": input_class})
+
+
+class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
+    password2 = forms.CharField(widget=forms.PasswordInput(), label='Повторный пароль')
 
     def clean(self):
         cleaned_data = super().clean()
@@ -20,12 +29,13 @@ class RegistrationForm(forms.ModelForm):
         }
 
 
-class AuthForm(forms.Form):
-    email = forms.EmailField()
-    password = forms.CharField(widget=forms.PasswordInput())
+class AuthForm(DefaultBootstrapInputs, forms.Form):
+    email = forms.EmailField(label="Почта")
+    password = forms.CharField(widget=forms.PasswordInput(), label='Пароль')
 
 
-class TaskListForm(forms.ModelForm):
+
+class TaskListForm(DefaultBootstrapInputs, forms.ModelForm):
 
     def save(self, *args, **kwargs):
         self.instance.created_user = self.initial['user']
@@ -36,13 +46,7 @@ class TaskListForm(forms.ModelForm):
         fields = ('title',)
 
 
-class TodoTaskForm(forms.ModelForm):
-    start_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"},
-                                                                format='%Y-%m-%dT%H:%m'),
-                                     required=False)
-    end_date = forms.DateTimeField(widget=forms.DateTimeInput(attrs={"type": "datetime-local"},
-                                                              format='%Y-%m-%dT%H:%m'),
-                                   required=False,)
+class TodoTaskForm(DefaultBootstrapInputs, forms.ModelForm):
 
     def save(self, *args, **kwargs):
         self.instance.created_user = self.initial['user']
@@ -51,4 +55,14 @@ class TodoTaskForm(forms.ModelForm):
 
     class Meta:
         model = TodoTask
-        exclude = ('created_user', 'task_list', )
+        exclude = ('created_user', 'task_list',)
+        widgets = {
+            "start_date": forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                              format='%Y-%m-%dT%H:%m'),
+            "end_date": forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                            format='%Y-%m-%dT%H:%m'),
+            "notify_at": forms.DateTimeInput(attrs={"type": "datetime-local"},
+                                             format='%Y-%m-%dT%H:%m'),
+            "assigned_user": forms.SelectMultiple(),
+            "task_type": forms.SelectMultiple()
+        }

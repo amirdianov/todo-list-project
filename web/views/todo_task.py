@@ -1,11 +1,13 @@
-from django.urls import reverse
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView
 
 from web.forms import TodoTaskForm
 from web.models import TodoTask
 
 
-class TodoTaskDetailView(DetailView):
+class TodoTaskDetailView(LoginRequiredMixin, DetailView):
     template_name = 'web/todo_task.html'
     slug_field = "id"
     slug_url_kwarg = "todo_task_id"
@@ -28,7 +30,7 @@ class TodoTaskMixin:
         return reverse("main")
 
 
-class TodoTaskCreateView(TodoTaskMixin, CreateView):
+class TodoTaskCreateView(TodoTaskMixin, LoginRequiredMixin, CreateView):
     form_class = TodoTaskForm
     slug_url_kwarg = "id"
 
@@ -36,7 +38,7 @@ class TodoTaskCreateView(TodoTaskMixin, CreateView):
         return {"user": self.request.user, "task_list_id": self.kwargs[self.slug_url_kwarg]}
 
 
-class TodoTaskUpdateView(TodoTaskMixin, UpdateView):
+class TodoTaskUpdateView(TodoTaskMixin, LoginRequiredMixin, UpdateView):
     form_class = TodoTaskForm
     slug_url_kwarg = "todo_task_id"
 
@@ -49,3 +51,20 @@ class TodoTaskUpdateView(TodoTaskMixin, UpdateView):
             "id": self.kwargs["todo_task_id"],
             "title": self.object.title,
         }
+
+
+class TodoTaskDeleteView(LoginRequiredMixin, DeleteView):
+    model = TodoTask
+    slug_field = "id"
+    slug_url_kwarg = "todo_task_id"
+
+    def delete(self, request, *args, **kwargs):
+        # Удаляем объект
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
+
+    def get_success_url(self):
+        return reverse_lazy("task_list",
+                            args=[self.kwargs['task_list_title'], self.kwargs['task_list_id']])

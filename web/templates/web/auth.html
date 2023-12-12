@@ -4,6 +4,6 @@
     <form action="" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button>Авторизоваться</button>
+        <button type="submit" class="btn btn-primary">Авторизоваться</button>
     </form>
 {% endblock %}

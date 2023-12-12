@@ -1,6 +1,12 @@
 {% extends "web/base.html" %}
 {% block content %}
-    <p><a href="{% url 'todo_task_edit' task_list_title task_list_id object.title object.id %}">Редактировать задчау</a></p>
+    <span><strong>Задача - {{ object.title }}</strong> / </span>
+    <a href="{% url 'todo_task_edit' task_list_title task_list_id object.title object.id %}">Редактировать задчау</a> /
+    <form method="POST" action="{% url 'todo_task_delete' task_list_title task_list_id object.title object.id %}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Удалить задачу</button>
+    </form>
+
     <ul>
         <li>{{ object.title }}</li>
         <li>{{ object.description }}</li>
