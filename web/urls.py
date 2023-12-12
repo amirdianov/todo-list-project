@@ -18,7 +18,7 @@ from django.urls import path
 
 from web.views import registration_view, auth_view, logout_view, TaskListCreateView, TaskListListView, \
     TaskListDetailView, TodoTaskCreateView, TaskListUpdateView, TodoTaskDetailView, TodoTaskUpdateView, \
-    TaskListDeleteView
+    TaskListDeleteView, TodoTaskDeleteView
 
 urlpatterns = [
     path("registration/", registration_view, name='registration'),
@@ -33,5 +33,7 @@ urlpatterns = [
          TodoTaskDetailView.as_view(), name='todo_task'),
     path("task_list/<str:title>/<int:id>/todo_task/add/", TodoTaskCreateView.as_view(), name='todo_task_add'),
     path("task_list/<str:task_list_title>/<int:task_list_id>/todo_task/<str:todo_task_title>/<int:todo_task_id>/edit/",
-         TodoTaskUpdateView.as_view(), name='todo_task_edit')
+         TodoTaskUpdateView.as_view(), name='todo_task_edit'),
+    path("task_list/<str:task_list_title>/<int:task_list_id>/todo_task/<str:todo_task_title>/<int:todo_task_id>/delete/",
+         TodoTaskDeleteView.as_view(), name='todo_task_delete')
 ]

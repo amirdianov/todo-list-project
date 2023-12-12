@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
@@ -29,6 +29,16 @@ class TaskListDetailView(LoginRequiredMixin, DetailView):
             **super().get_context_data(**kwargs),
             'tasks': TodoTask.objects.filter(task_list=self.object.id)
         }
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        # Проверяем, имеет ли пользователь доступ к объекту TaskList
+        if request.user.id != self.object.created_user.id:
+            raise Http404("У вас нет доступа к этому списку задач.")
+
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 
 class TaskListMixin:
