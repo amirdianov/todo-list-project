@@ -1,6 +1,6 @@
 from django import forms
 
-from web.models import User, TaskList, TodoTask, TaskType
+from web.models import User, TaskList, TodoTask
 
 
 class DefaultBootstrapInputs:
@@ -10,6 +10,10 @@ class DefaultBootstrapInputs:
         for attr, value in self.fields.items():
             input_class = "form-select" if self.fields[attr].widget.input_type == "select" else "form-control"
             self.fields[attr].widget.attrs.update({"class": input_class})
+
+
+class TodoListFilterForm(DefaultBootstrapInputs, forms.Form):
+    search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": 'Поиск'}), required=False)
 
 
 class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
@@ -32,7 +36,6 @@ class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
 class AuthForm(DefaultBootstrapInputs, forms.Form):
     email = forms.EmailField(label="Почта")
     password = forms.CharField(widget=forms.PasswordInput(), label='Пароль')
-
 
 
 class TaskListForm(DefaultBootstrapInputs, forms.ModelForm):

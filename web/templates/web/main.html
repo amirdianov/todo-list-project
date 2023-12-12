@@ -3,11 +3,35 @@
     {% if not user.is_anonymous %}
         Вы авторизованы как <b>{{ user.name }}</b>
         <div>
-            <p>Мои списки / <a href="{% url 'task_list_add' %}">Добавить список</a>
-            </p>
+            <div>
+                <p>Мои списки / <a href="{% url 'task_list_add' %}">Добавить список</a></p>
+                <form action="" method="get">
+                    <b>Фильтры</b>:
+                    {% for field in filter_form %}
+                        {{ field }}
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary mt-2">Поиск</button>
+                </form>
+            </div>
+
             {% for tasklist in object_list %}
                 <p><b><a href="{% url "task_list" tasklist.title tasklist.id %}">{{ tasklist.title }}</a></b></p>
             {% endfor %}
+            {% if is_paginated %}
+                <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="/task_lists?page={{ page_obj.previous_page_number }}">previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="/task_lists?page={{ page_obj.next_page_number }}">next</a>
+                {% endif %}
+            </span>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 {% endblock %}

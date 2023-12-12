@@ -1,21 +1,35 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
-from web.forms import TaskListForm
+from web.forms import TaskListForm, TodoListFilterForm
 from web.models import TaskList, TodoTask
 
 
 class TaskListListView(LoginRequiredMixin, ListView):
     template_name = "web/main.html"
     model = TaskList
+    paginate_by = 1
+
+    def filter_queryset(self, qs):
+        self.search = self.request.GET.get("search", None)
+        if self.search:
+            qs = qs.filter(Q(title__icontains=self.search))
+        return qs
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return TaskList.objects.none()
-        else:
-            return TaskList.objects.filter(created_user=self.request.user)
+        queryset = TaskList.objects.filter(created_user=self.request.user)
+        return self.filter_queryset(queryset)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        return {
+            **super().get_context_data(**kwargs),
+            'filter_form': TodoListFilterForm(self.request.GET)
+        }
 
 
 class TaskListDetailView(LoginRequiredMixin, DetailView):
