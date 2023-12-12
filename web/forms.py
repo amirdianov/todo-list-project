@@ -1,6 +1,6 @@
 from django import forms
 
-from web.models import User, TaskList, TodoTask
+from web.models import User, TaskList, TodoTask, TaskType
 
 
 class DefaultBootstrapInputs:
@@ -13,7 +13,12 @@ class DefaultBootstrapInputs:
 
 
 class TodoListFilterForm(DefaultBootstrapInputs, forms.Form):
-    search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": 'Поиск'}), required=False)
+    search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": 'Поиск'}), required=False, label='')
+
+
+class TodoTaskFilterForm(TodoListFilterForm):
+    type_of_task = forms.ModelChoiceField(queryset=TaskType.objects.all(), empty_label="Выберите тег",
+                                          widget=forms.Select(), label='Тип задачи')
 
 
 class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):

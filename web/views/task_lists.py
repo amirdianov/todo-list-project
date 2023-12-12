@@ -4,20 +4,22 @@ from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
-from web.forms import TaskListForm, TodoListFilterForm
-from web.models import TaskList, TodoTask
+from web.forms import TaskListForm, TodoListFilterForm, TodoTaskFilterForm
+from web.models import TaskList, TodoTask, TaskType
 
 
-class TaskListListView(LoginRequiredMixin, ListView):
-    template_name = "web/main.html"
-    model = TaskList
-    paginate_by = 1
-
+class FilterClass:
     def filter_queryset(self, qs):
         self.search = self.request.GET.get("search", None)
         if self.search:
             qs = qs.filter(Q(title__icontains=self.search))
         return qs
+
+
+class TaskListListView(LoginRequiredMixin, ListView, FilterClass):
+    template_name = "web/main.html"
+    model = TaskList
+    paginate_by = 1
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
@@ -32,16 +34,25 @@ class TaskListListView(LoginRequiredMixin, ListView):
         }
 
 
-class TaskListDetailView(LoginRequiredMixin, DetailView):
+class TaskListDetailView(LoginRequiredMixin, DetailView, FilterClass):
     template_name = 'web/task_list.html'
     slug_field = "id"
     slug_url_kwarg = "id"
     model = TaskList
 
+    def filter_queryset(self, qs):
+        qs = super().filter_queryset(qs)
+        self.type_of_task = self.request.GET.get("type_of_task", None)
+        if self.type_of_task:
+            type_task = TaskType.objects.get(id=self.type_of_task)
+            qs = qs.filter(task_type__in=[type_task])
+        return qs
+
     def get_context_data(self, **kwargs):
         return {
             **super().get_context_data(**kwargs),
-            'tasks': TodoTask.objects.filter(task_list=self.object.id)
+            'tasks': self.filter_queryset(TodoTask.objects.filter(task_list=self.object.id)),
+            'filter_form': TodoTaskFilterForm(self.request.GET)
         }
 
     def get(self, request, *args, **kwargs):
