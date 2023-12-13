@@ -1,33 +1,58 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
-from web.forms import TaskListForm
-from web.models import TaskList, TodoTask
+from web.forms import TaskListForm, TodoListFilterForm, TodoTaskFilterForm
+from web.models import TaskList, TodoTask, TaskType
 
 
-class TaskListListView(LoginRequiredMixin, ListView):
+class FilterClass:
+    def filter_queryset(self, qs):
+        self.search = self.request.GET.get("search", None)
+        if self.search:
+            qs = qs.filter(Q(title__icontains=self.search))
+        return qs
+
+
+class TaskListListView(LoginRequiredMixin, ListView, FilterClass):
     template_name = "web/main.html"
     model = TaskList
+    paginate_by = 1
 
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return TaskList.objects.none()
-        else:
-            return TaskList.objects.filter(created_user=self.request.user)
+        queryset = TaskList.objects.filter(created_user=self.request.user)
+        return self.filter_queryset(queryset)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        return {
+            **super().get_context_data(**kwargs),
+            'filter_form': TodoListFilterForm(self.request.GET)
+        }
 
 
-class TaskListDetailView(LoginRequiredMixin, DetailView):
+class TaskListDetailView(LoginRequiredMixin, DetailView, FilterClass):
     template_name = 'web/task_list.html'
     slug_field = "id"
     slug_url_kwarg = "id"
     model = TaskList
 
+    def filter_queryset(self, qs):
+        qs = super().filter_queryset(qs)
+        self.type_of_task = self.request.GET.get("type_of_task", None)
+        if self.type_of_task:
+            type_task = TaskType.objects.get(id=self.type_of_task)
+            qs = qs.filter(task_type__in=[type_task])
+        return qs
+
     def get_context_data(self, **kwargs):
         return {
             **super().get_context_data(**kwargs),
-            'tasks': TodoTask.objects.filter(task_list=self.object.id)
+            'tasks': self.filter_queryset(TodoTask.objects.filter(task_list=self.object.id).prefetch_related('task_type').select_related('created_user')),
+            'filter_form': TodoTaskFilterForm(self.request.GET)
         }
 
     def get(self, request, *args, **kwargs):

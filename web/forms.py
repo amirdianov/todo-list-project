@@ -12,6 +12,15 @@ class DefaultBootstrapInputs:
             self.fields[attr].widget.attrs.update({"class": input_class})
 
 
+class TodoListFilterForm(DefaultBootstrapInputs, forms.Form):
+    search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": 'Поиск'}), required=False, label='')
+
+
+class TodoTaskFilterForm(TodoListFilterForm):
+    type_of_task = forms.ModelChoiceField(queryset=TaskType.objects.all(), empty_label="Выберите тег",
+                                          widget=forms.Select(), label='Тип задачи')
+
+
 class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
     password2 = forms.CharField(widget=forms.PasswordInput(), label='Повторный пароль')
 
@@ -32,7 +41,6 @@ class RegistrationForm(DefaultBootstrapInputs, forms.ModelForm):
 class AuthForm(DefaultBootstrapInputs, forms.Form):
     email = forms.EmailField(label="Почта")
     password = forms.CharField(widget=forms.PasswordInput(), label='Пароль')
-
 
 
 class TaskListForm(DefaultBootstrapInputs, forms.ModelForm):
