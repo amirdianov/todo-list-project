@@ -32,7 +32,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = "email"
     USERNAME_FIELD = "email"
-
+    @property
+    def is_staff(self):
+        return self.role in (Role.admin, Role.head_of_dep)
     @property
     def is_superuser(self):
         return self.role == Role.admin
@@ -55,6 +57,10 @@ class TaskList(models.Model):
     title = models.CharField(max_length=128, verbose_name='Заголовок списка')
     created_user = models.ForeignKey(User, on_delete=models.CASCADE,
                                      verbose_name='Создатель списка задач')
+
+    class Meta:
+        verbose_name = 'Лист заданий'
+        verbose_name_plural = 'Листы с заданиями'
 
     def __str__(self):
         return f'Список заданий {self.id} "{self.title}"'
